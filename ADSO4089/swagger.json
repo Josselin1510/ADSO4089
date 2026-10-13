@@ -1,0 +1,2462 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API Gestión Académica ADSO 4089",
+    "description": "Documentación interactiva de la API REST para el sistema de gestión académica ADSO 4089 (SENA). Permite administrar Personas, Aprendices, Instructores, Cursos, Matrículas, Imparticiones, Evaluaciones y Calificaciones (MatEva).",
+    "version": "1.0.0",
+    "contact": {
+      "name": "Equipo de Desarrollo ADSO 4089"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:5000",
+      "description": "Servidor Local (127.0.0.1)"
+    },
+    {
+      "url": "http://localhost:5000",
+      "description": "Servidor Local (localhost)"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Personas",
+      "description": "Operaciones CRUD para la gestión de personas"
+    },
+    {
+      "name": "Aprendices",
+      "description": "Operaciones CRUD para aprendices vinculados a personas"
+    },
+    {
+      "name": "Instructores",
+      "description": "Operaciones CRUD para instructores vinculados a personas"
+    },
+    {
+      "name": "Cursos",
+      "description": "Operaciones CRUD para los cursos formativos"
+    },
+    {
+      "name": "Matrículas",
+      "description": "Gestión de matrículas de aprendices en los cursos"
+    },
+    {
+      "name": "Impartes",
+      "description": "Asignación y vinculación de instructores a los cursos que imparten"
+    },
+    {
+      "name": "Evaluaciones",
+      "description": "Gestión de evaluaciones asociadas a los procesos formativos"
+    },
+    {
+      "name": "MatEva (Calificaciones)",
+      "description": "Registro y gestión de notas y calificaciones de matrículas en evaluaciones"
+    }
+  ],
+  "paths": {
+    "/personas/": {
+      "get": {
+        "tags": [
+          "Personas"
+        ],
+        "summary": "Listar todas las personas",
+        "description": "Retorna la lista completa de personas registradas en la base de datos.",
+        "responses": {
+          "200": {
+            "description": "Lista de personas obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Persona"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Personas"
+        ],
+        "summary": "Crear una nueva persona",
+        "description": "Registra una nueva persona en el sistema. Todos los campos son obligatorios.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Persona creada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PersonaCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros faltantes o JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/personas/{id}": {
+      "get": {
+        "tags": [
+          "Personas"
+        ],
+        "summary": "Obtener persona por ID",
+        "description": "Busca y retorna los datos de una persona a partir de su ID primario.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID numérico de la persona (PER_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Persona encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Persona"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Persona no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Personas"
+        ],
+        "summary": "Actualizar persona por ID",
+        "description": "Actualiza la información de una persona existente.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID numérico de la persona (PER_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PersonaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Persona actualizada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Datos faltantes o inválidos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Personas"
+        ],
+        "summary": "Eliminar persona por ID",
+        "description": "Elimina una persona del sistema mediante su ID numérico.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID numérico de la persona (PER_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Persona eliminada correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No se puede eliminar porque tiene registros asociados (clave foránea).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Persona no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aprendices/": {
+      "get": {
+        "tags": [
+          "Aprendices"
+        ],
+        "summary": "Listar todos los aprendices",
+        "description": "Retorna la lista de todos los aprendices registrados.",
+        "responses": {
+          "200": {
+            "description": "Lista de aprendices obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Aprendiz"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Aprendices"
+        ],
+        "summary": "Crear un nuevo aprendiz",
+        "description": "Crea un registro de aprendiz asociándolo a una persona existente.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AprendizInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Aprendiz creado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AprendizCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Parámetros faltantes o JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/aprendices/{id}": {
+      "get": {
+        "tags": [
+          "Aprendices"
+        ],
+        "summary": "Obtener aprendiz por ID",
+        "description": "Busca y retorna los datos de un aprendiz por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del aprendiz (APR_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aprendiz encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Aprendiz"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Aprendiz no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Aprendices"
+        ],
+        "summary": "Actualizar aprendiz por ID",
+        "description": "Actualiza la fecha de nacimiento y/o persona vinculada al aprendiz.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del aprendiz (APR_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AprendizInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Aprendiz actualizado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Aprendices"
+        ],
+        "summary": "Eliminar aprendiz por ID",
+        "description": "Elimina un aprendiz si no tiene matrículas asociadas.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del aprendiz (APR_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Aprendiz eliminado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No se puede eliminar porque tiene matrículas o registros asociados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Aprendiz no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/instructores/": {
+      "get": {
+        "tags": [
+          "Instructores"
+        ],
+        "summary": "Listar todos los instructores",
+        "description": "Retorna la lista de todos los instructores registrados.",
+        "responses": {
+          "200": {
+            "description": "Lista de instructores obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Instructor"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Instructores"
+        ],
+        "summary": "Crear un nuevo instructor",
+        "description": "Crea un instructor con su especialidad y persona asociada.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstructorInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Instructor creado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InstructorCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan parámetros requeridos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/instructores/{id}": {
+      "get": {
+        "tags": [
+          "Instructores"
+        ],
+        "summary": "Obtener instructor por ID",
+        "description": "Busca y retorna los datos de un instructor por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del instructor (INS_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Instructor encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Instructor"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Instructor no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Instructores"
+        ],
+        "summary": "Actualizar instructor por ID",
+        "description": "Actualiza la especialidad o persona vinculada al instructor.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del instructor (INS_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/InstructorInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Instructor actualizado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Instructores"
+        ],
+        "summary": "Eliminar instructor por ID",
+        "description": "Elimina un instructor si no tiene cursos asignados.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del instructor (INS_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Instructor eliminado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No se puede eliminar el instructor porque tiene asignaciones activas.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Instructor no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cursos/": {
+      "get": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Listar todos los cursos",
+        "description": "Retorna la lista de todos los cursos disponibles.",
+        "responses": {
+          "200": {
+            "description": "Lista de cursos obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Curso"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Crear un nuevo curso",
+        "description": "Registra un nuevo curso en el sistema con todos sus datos.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CursoInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Curso creado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CursoCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan parámetros requeridos o JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/cursos/{id}": {
+      "get": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Obtener curso por ID",
+        "description": "Busca y retorna un curso por su ID numérico.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del curso (CUR_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Curso encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Curso"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Curso no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Actualizar curso por ID",
+        "description": "Actualiza la información de un curso existente.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del curso (CUR_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CursoInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Curso actualizado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan parámetros requeridos.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Cursos"
+        ],
+        "summary": "Eliminar curso por ID",
+        "description": "Elimina un curso si no posee matrículas o imparticiones asociadas.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del curso (CUR_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Curso eliminado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No se puede eliminar el curso porque tiene registros asociados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Curso no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/matriculas/": {
+      "get": {
+        "tags": [
+          "Matrículas"
+        ],
+        "summary": "Listar todas las matrículas",
+        "description": "Retorna el listado de todas las matrículas realizadas.",
+        "responses": {
+          "200": {
+            "description": "Lista de matrículas obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Matricula"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Matrículas"
+        ],
+        "summary": "Registrar una nueva matrícula",
+        "description": "Matricula un aprendiz en un curso específico.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatriculaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Matrícula registrada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatriculaCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan parámetros requeridos o JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/matriculas/{id}": {
+      "get": {
+        "tags": [
+          "Matrículas"
+        ],
+        "summary": "Obtener matrícula por ID",
+        "description": "Busca y retorna una matrícula por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la matrícula (MAT_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matrícula encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Matricula"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Matrícula no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Matrículas"
+        ],
+        "summary": "Actualizar matrícula por ID",
+        "description": "Actualiza el estado, fecha, aprendiz o curso de una matrícula.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la matrícula (MAT_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatriculaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Matrícula actualizada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido o parámetros faltantes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Matrículas"
+        ],
+        "summary": "Eliminar matrícula por ID",
+        "description": "Elimina una matrícula si no tiene notas o evaluaciones vinculadas.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la matrícula (MAT_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Matrícula eliminada correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No se puede eliminar la matrícula porque tiene registros asociados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Matrícula no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/impartes/": {
+      "get": {
+        "tags": [
+          "Impartes"
+        ],
+        "summary": "Listar todas las imparticiones",
+        "description": "Retorna la lista de relaciones entre instructores y cursos asignados.",
+        "responses": {
+          "200": {
+            "description": "Lista de imparticiones obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Imparte"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Impartes"
+        ],
+        "summary": "Asignar curso a instructor",
+        "description": "Registra una nueva asignación de curso a un instructor con su rol y fecha.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImparteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Asignación creada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImparteCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan parámetros requeridos o JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/impartes/{id}": {
+      "get": {
+        "tags": [
+          "Impartes"
+        ],
+        "summary": "Obtener asignación por ID",
+        "description": "Busca y retorna un registro de impartición por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del registro de impartición (IMP_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registro de impartición encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Imparte"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Impartes"
+        ],
+        "summary": "Actualizar asignación por ID",
+        "description": "Actualiza los datos de una asignación de instructor a curso.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del registro de impartición (IMP_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ImparteInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registro actualizado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido o parámetros faltantes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Impartes"
+        ],
+        "summary": "Eliminar asignación por ID",
+        "description": "Elimina un registro de impartición de curso.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del registro de impartición (IMP_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registro eliminado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No se puede eliminar el registro porque tiene datos asociados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluaciones/": {
+      "get": {
+        "tags": [
+          "Evaluaciones"
+        ],
+        "summary": "Listar todas las evaluaciones",
+        "description": "Retorna la lista de todas las evaluaciones académicas.",
+        "responses": {
+          "200": {
+            "description": "Lista de evaluaciones obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Evaluacion"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Evaluaciones"
+        ],
+        "summary": "Crear una nueva evaluación",
+        "description": "Registra una nueva evaluación con su nombre, código, porcentaje y fecha.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluacionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Evaluación creada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EvaluacionCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan parámetros requeridos o JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/evaluaciones/{id}": {
+      "get": {
+        "tags": [
+          "Evaluaciones"
+        ],
+        "summary": "Obtener evaluación por ID",
+        "description": "Busca y retorna los datos de una evaluación por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la evaluación (EVA_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evaluación encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Evaluacion"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evaluación no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Evaluaciones"
+        ],
+        "summary": "Actualizar evaluación por ID",
+        "description": "Actualiza el nombre, código, porcentaje o fecha de una evaluación.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la evaluación (EVA_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EvaluacionInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Evaluación actualizada correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido o parámetros faltantes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Evaluaciones"
+        ],
+        "summary": "Eliminar evaluación por ID",
+        "description": "Elimina una evaluación si no posee calificaciones asociadas.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID de la evaluación (EVA_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Evaluación eliminada correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No se puede eliminar la evaluación porque tiene registros asociados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Evaluación no encontrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/matevas/": {
+      "get": {
+        "tags": [
+          "MatEva (Calificaciones)"
+        ],
+        "summary": "Listar todas las calificaciones",
+        "description": "Retorna la lista de todas las calificaciones de matrículas en evaluaciones.",
+        "responses": {
+          "200": {
+            "description": "Lista de calificaciones obtenida exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MatEva"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "MatEva (Calificaciones)"
+        ],
+        "summary": "Registrar una calificación",
+        "description": "Asigna una nota a una matrícula en una evaluación específica.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatEvaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Calificación registrada exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatEvaCreatedResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Faltan parámetros requeridos o JSON inválido.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/matevas/{id}": {
+      "get": {
+        "tags": [
+          "MatEva (Calificaciones)"
+        ],
+        "summary": "Obtener calificación por ID",
+        "description": "Busca y retorna un registro de calificación por su ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del registro de calificación (MATE_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registro de calificación encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MatEva"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "MatEva (Calificaciones)"
+        ],
+        "summary": "Actualizar calificación por ID",
+        "description": "Actualiza la nota, evaluación o matrícula asociada.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del registro de calificación (MATE_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MatEvaInput"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Registro actualizado exitosamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "JSON inválido o parámetros faltantes.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "MatEva (Calificaciones)"
+        ],
+        "summary": "Eliminar calificación por ID",
+        "description": "Elimina un registro de calificación.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "ID del registro de calificación (MATE_ID)",
+            "schema": {
+              "type": "integer",
+              "example": 1
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Registro eliminado correctamente.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeExito"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "No se puede eliminar el registro porque tiene datos asociados.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorGeneral"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Registro no encontrado.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MensajeError"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Persona": {
+        "type": "object",
+        "properties": {
+          "PER_ID": {
+            "type": "integer",
+            "description": "Identificador único de la persona",
+            "example": 1
+          },
+          "PER_UUID": {
+            "type": "string",
+            "format": "uuid",
+            "description": "UUID único de la persona",
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          "PER_PRI_NOMBRE": {
+            "type": "string",
+            "description": "Primer nombre",
+            "example": "Carlos"
+          },
+          "PER_SEG_NOMBRE": {
+            "type": "string",
+            "description": "Segundo nombre",
+            "example": "Andrés"
+          },
+          "PER_PRI_APELLIDO": {
+            "type": "string",
+            "description": "Primer apellido",
+            "example": "Pérez"
+          },
+          "PER_SEG_APELLIDO": {
+            "type": "string",
+            "description": "Segundo apellido",
+            "example": "Gómez"
+          },
+          "PER_DOC": {
+            "type": "integer",
+            "description": "Número de documento de identidad",
+            "example": 1023456789
+          }
+        }
+      },
+      "PersonaInput": {
+        "type": "object",
+        "required": [
+          "primer_nombre",
+          "segundo_nombre",
+          "primer_apellido",
+          "segundo_apellido",
+          "documento"
+        ],
+        "properties": {
+          "primer_nombre": {
+            "type": "string",
+            "description": "Primer nombre de la persona",
+            "example": "Carlos"
+          },
+          "segundo_nombre": {
+            "type": "string",
+            "description": "Segundo nombre (puede ser vacío o cadena)",
+            "example": "Andrés"
+          },
+          "primer_apellido": {
+            "type": "string",
+            "description": "Primer apellido de la persona",
+            "example": "Pérez"
+          },
+          "segundo_apellido": {
+            "type": "string",
+            "description": "Segundo apellido de la persona",
+            "example": "Gómez"
+          },
+          "documento": {
+            "type": "integer",
+            "description": "Número de documento de identidad único",
+            "example": 1023456789
+          }
+        }
+      },
+      "PersonaCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "PER_UUID": {
+            "type": "string",
+            "example": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d"
+          },
+          "primer_nombre": {
+            "type": "string",
+            "example": "Carlos"
+          },
+          "segundo_nombre": {
+            "type": "string",
+            "example": "Andrés"
+          },
+          "primer_apellido": {
+            "type": "string",
+            "example": "Pérez"
+          },
+          "segundo_apellido": {
+            "type": "string",
+            "example": "Gómez"
+          },
+          "documento": {
+            "type": "integer",
+            "example": 1023456789
+          }
+        }
+      },
+      "Aprendiz": {
+        "type": "object",
+        "properties": {
+          "APR_ID": {
+            "type": "integer",
+            "description": "ID del aprendiz",
+            "example": 1
+          },
+          "APR_UUID": {
+            "type": "string",
+            "format": "uuid",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "APR_FECHA_NAC": {
+            "type": "string",
+            "format": "date",
+            "description": "Fecha de nacimiento (AAAA-MM-DD)",
+            "example": "2002-05-20"
+          },
+          "APR_PER_ID": {
+            "type": "integer",
+            "description": "ID de la persona vinculada",
+            "example": 1
+          }
+        }
+      },
+      "AprendizInput": {
+        "type": "object",
+        "required": [
+          "fecha_nac",
+          "per_id"
+        ],
+        "properties": {
+          "fecha_nac": {
+            "type": "string",
+            "format": "date",
+            "description": "Fecha de nacimiento en formato YYYY-MM-DD",
+            "example": "2002-05-20"
+          },
+          "per_id": {
+            "type": "integer",
+            "description": "ID de la persona a vincular como aprendiz",
+            "example": 1
+          }
+        }
+      },
+      "AprendizCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "uuid": {
+            "type": "string",
+            "example": "550e8400-e29b-41d4-a716-446655440000"
+          },
+          "fecha_nac": {
+            "type": "string",
+            "example": "2002-05-20"
+          },
+          "per_id": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "Instructor": {
+        "type": "object",
+        "properties": {
+          "INS_ID": {
+            "type": "integer",
+            "description": "ID del instructor",
+            "example": 1
+          },
+          "INS_UUID": {
+            "type": "string",
+            "format": "uuid",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          "INS_ESPECIALIDAD": {
+            "type": "string",
+            "description": "Área de especialidad del instructor",
+            "example": "Desarrollo de Software"
+          },
+          "INS_PER_ID": {
+            "type": "integer",
+            "description": "ID de la persona vinculada",
+            "example": 2
+          }
+        }
+      },
+      "InstructorInput": {
+        "type": "object",
+        "required": [
+          "especialidad",
+          "per_id"
+        ],
+        "properties": {
+          "especialidad": {
+            "type": "string",
+            "description": "Especialidad técnica del instructor",
+            "example": "Desarrollo de Software"
+          },
+          "per_id": {
+            "type": "integer",
+            "description": "ID de la persona a vincular",
+            "example": 2
+          }
+        }
+      },
+      "InstructorCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "INS_UUID": {
+            "type": "string",
+            "example": "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+          },
+          "especialidad": {
+            "type": "string",
+            "example": "Desarrollo de Software"
+          },
+          "per_id": {
+            "type": "integer",
+            "example": 2
+          }
+        }
+      },
+      "Curso": {
+        "type": "object",
+        "properties": {
+          "CUR_ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "CUR_UUID": {
+            "type": "string",
+            "format": "uuid",
+            "example": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+          },
+          "CUR_NOMBRE": {
+            "type": "string",
+            "example": "Programación Web"
+          },
+          "CUR_CODIGO": {
+            "type": "integer",
+            "example": 4089
+          },
+          "CUR_DURACION": {
+            "type": "integer",
+            "description": "Duración en horas",
+            "example": 120
+          },
+          "CUR_DESCRIPCION": {
+            "type": "string",
+            "example": "Curso avanzado de desarrollo web backend y frontend"
+          },
+          "CUR_COSTO": {
+            "type": "number",
+            "format": "float",
+            "example": 150000.0
+          }
+        }
+      },
+      "CursoInput": {
+        "type": "object",
+        "required": [
+          "nombre",
+          "codigo",
+          "duracion",
+          "costo",
+          "descripcion"
+        ],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "description": "Nombre del curso",
+            "example": "Programación Web"
+          },
+          "codigo": {
+            "type": "integer",
+            "description": "Código numérico único del curso",
+            "example": 4089
+          },
+          "duracion": {
+            "type": "integer",
+            "description": "Duración total en horas",
+            "example": 120
+          },
+          "costo": {
+            "type": "number",
+            "format": "float",
+            "description": "Costo del curso",
+            "example": 150000.0
+          },
+          "descripcion": {
+            "type": "string",
+            "description": "Descripción general del contenido formativo",
+            "example": "Curso avanzado de desarrollo web backend y frontend"
+          }
+        }
+      },
+      "CursoCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "uuid": {
+            "type": "string",
+            "example": "7c9e6679-7425-40de-944b-e07fc1f90ae7"
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Programación Web"
+          },
+          "codigo": {
+            "type": "integer",
+            "example": 4089
+          },
+          "duracion": {
+            "type": "integer",
+            "example": 120
+          },
+          "costo": {
+            "type": "number",
+            "example": 150000.0
+          },
+          "descripcion": {
+            "type": "string",
+            "example": "Curso avanzado de desarrollo web backend y frontend"
+          }
+        }
+      },
+      "Matricula": {
+        "type": "object",
+        "properties": {
+          "MAT_ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "MAT_UUID": {
+            "type": "string",
+            "format": "uuid",
+            "example": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+          },
+          "MAT_ESTADO": {
+            "type": "string",
+            "example": "Activo"
+          },
+          "MAT_FECHA_INSCRIPCION": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-03-01"
+          },
+          "MAT_APR_ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "MAT_CUR_ID": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "MatriculaInput": {
+        "type": "object",
+        "required": [
+          "estado",
+          "fecha_inscripcion",
+          "apr_id",
+          "cur_id"
+        ],
+        "properties": {
+          "estado": {
+            "type": "string",
+            "description": "Estado de la matrícula (p. ej. Activo, Finalizado, Retirado)",
+            "example": "Activo"
+          },
+          "fecha_inscripcion": {
+            "type": "string",
+            "format": "date",
+            "description": "Fecha de matrícula en formato YYYY-MM-DD",
+            "example": "2026-03-01"
+          },
+          "apr_id": {
+            "type": "integer",
+            "description": "ID del aprendiz",
+            "example": 1
+          },
+          "cur_id": {
+            "type": "integer",
+            "description": "ID del curso",
+            "example": 1
+          }
+        }
+      },
+      "MatriculaCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "MAT_UUID": {
+            "type": "string",
+            "example": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d"
+          },
+          "estado": {
+            "type": "string",
+            "example": "Activo"
+          },
+          "fecha_inscripcion": {
+            "type": "string",
+            "example": "2026-03-01"
+          },
+          "apr_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "cur_id": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "Imparte": {
+        "type": "object",
+        "properties": {
+          "IMP_ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "IMP_UUID": {
+            "type": "string",
+            "format": "uuid",
+            "example": "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e"
+          },
+          "IMP_ROL": {
+            "type": "string",
+            "example": "Instructor Líder"
+          },
+          "IMP_FECHA_ASIGNACION": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-02-15"
+          },
+          "IMP_CUR_ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "IMP_INS_ID": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "ImparteInput": {
+        "type": "object",
+        "required": [
+          "rol",
+          "fecha_asignacion",
+          "cur_id",
+          "ins_id"
+        ],
+        "properties": {
+          "rol": {
+            "type": "string",
+            "description": "Rol del instructor en el curso (Titular, Apoyo, Líder)",
+            "example": "Instructor Líder"
+          },
+          "fecha_asignacion": {
+            "type": "string",
+            "format": "date",
+            "description": "Fecha de asignación (YYYY-MM-DD)",
+            "example": "2026-02-15"
+          },
+          "cur_id": {
+            "type": "integer",
+            "description": "ID del curso",
+            "example": 1
+          },
+          "ins_id": {
+            "type": "integer",
+            "description": "ID del instructor",
+            "example": 1
+          }
+        }
+      },
+      "ImparteCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "IMP_UUID": {
+            "type": "string",
+            "example": "b2c3d4e5-f6a7-8b9c-0d1e-2f3a4b5c6d7e"
+          },
+          "rol": {
+            "type": "string",
+            "example": "Instructor Líder"
+          },
+          "fecha_asignacion": {
+            "type": "string",
+            "example": "2026-02-15"
+          },
+          "cur_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "ins_id": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "Evaluacion": {
+        "type": "object",
+        "properties": {
+          "EVA_ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "EVA_UUID": {
+            "type": "string",
+            "format": "uuid",
+            "example": "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f"
+          },
+          "EVA_NOMBRE": {
+            "type": "string",
+            "example": "Evaluación Parcial 1"
+          },
+          "EVA_CODIGO": {
+            "type": "integer",
+            "example": 101
+          },
+          "EVA_PORCENTAJE": {
+            "type": "number",
+            "format": "float",
+            "description": "Porcentaje ponderado de la evaluación (0 a 100)",
+            "example": 25.0
+          },
+          "EVA_DATE": {
+            "type": "string",
+            "format": "date",
+            "example": "2026-04-10"
+          }
+        }
+      },
+      "EvaluacionInput": {
+        "type": "object",
+        "required": [
+          "nombre",
+          "codigo",
+          "porcentaje",
+          "fecha"
+        ],
+        "properties": {
+          "nombre": {
+            "type": "string",
+            "description": "Nombre de la evaluación",
+            "example": "Evaluación Parcial 1"
+          },
+          "codigo": {
+            "type": "integer",
+            "description": "Código numérico de la evaluación",
+            "example": 101
+          },
+          "porcentaje": {
+            "type": "number",
+            "format": "float",
+            "description": "Peso porcentual de la evaluación",
+            "example": 25.0
+          },
+          "fecha": {
+            "type": "string",
+            "format": "date",
+            "description": "Fecha programada (YYYY-MM-DD)",
+            "example": "2026-04-10"
+          }
+        }
+      },
+      "EvaluacionCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "EVA_UUID": {
+            "type": "string",
+            "example": "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f"
+          },
+          "nombre": {
+            "type": "string",
+            "example": "Evaluación Parcial 1"
+          },
+          "codigo": {
+            "type": "integer",
+            "example": 101
+          },
+          "porcentaje": {
+            "type": "number",
+            "example": 25.0
+          },
+          "fecha": {
+            "type": "string",
+            "example": "2026-04-10"
+          }
+        }
+      },
+      "MatEva": {
+        "type": "object",
+        "properties": {
+          "MATE_ID": {
+            "type": "integer",
+            "example": 1
+          },
+          "MATE_UUID": {
+            "type": "string",
+            "format": "uuid",
+            "example": "d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a"
+          },
+          "MATE_EVA_ID": {
+            "type": "integer",
+            "description": "ID de la evaluación",
+            "example": 1
+          },
+          "MATE_MAT_ID": {
+            "type": "integer",
+            "description": "ID de la matrícula del aprendiz",
+            "example": 1
+          },
+          "MATE_NOTA": {
+            "type": "number",
+            "format": "float",
+            "description": "Calificación numérica obtenida",
+            "example": 4.5
+          }
+        }
+      },
+      "MatEvaInput": {
+        "type": "object",
+        "required": [
+          "nota",
+          "eva_id",
+          "mat_id"
+        ],
+        "properties": {
+          "nota": {
+            "type": "number",
+            "format": "float",
+            "description": "Nota o puntaje asignado",
+            "example": 4.5
+          },
+          "eva_id": {
+            "type": "integer",
+            "description": "ID de la evaluación",
+            "example": 1
+          },
+          "mat_id": {
+            "type": "integer",
+            "description": "ID de la matrícula",
+            "example": 1
+          }
+        }
+      },
+      "MatEvaCreatedResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "example": 1
+          },
+          "MATE_UUID": {
+            "type": "string",
+            "example": "d4e5f6a7-b8c9-0d1e-2f3a-4b5c6d7e8f9a"
+          },
+          "nota": {
+            "type": "number",
+            "example": 4.5
+          },
+          "eva_id": {
+            "type": "integer",
+            "example": 1
+          },
+          "mat_id": {
+            "type": "integer",
+            "example": 1
+          }
+        }
+      },
+      "MensajeExito": {
+        "type": "object",
+        "properties": {
+          "mensaje": {
+            "type": "string",
+            "example": "Registro actualizado correctamente"
+          }
+        }
+      },
+      "MensajeError": {
+        "type": "object",
+        "properties": {
+          "mensaje": {
+            "type": "string",
+            "example": "Registro no encontrado"
+          }
+        }
+      },
+      "ErrorGeneral": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "example": "JSON inválido"
+          }
+        }
+      }
+    }
+  }
+}
